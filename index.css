@@ -143,8 +143,9 @@ html {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    z-index: 10;
+    z-index: 30; /* Tăng từ 10 lên 30 để lướt 3D trang sách trên cùng, không bị header/footer che khuất */
     overflow: visible;
+    pointer-events: none; /* Cho phép sự kiện click đi xuyên qua vùng trống của khung nội dung */
 }
 
 /* Viewport cuốn sách: Cắt phần thừa lề trái ở 30px */
@@ -158,6 +159,7 @@ html {
     /* Cắt các trang/nội dung bị tràn ra ngoài màn hình */
     display: flex;
     align-items: center;
+    pointer-events: auto; /* Kích hoạt lại tương tác click/vuốt trên vùng sách */
 }
 
 /* Container sách lật - căn spine vào mốc 20px của viewport (tương đương 50px màn hình) */
@@ -347,6 +349,7 @@ html {
     letter-spacing: 2px;
     color: #e5dfd3;
     z-index: 12;
+    pointer-events: auto; /* Kích hoạt lại tương tác cho phần chỉ số trang */
 }
 
 .page-indicator span {
@@ -367,6 +370,7 @@ html {
     flex-direction: column;
     gap: 15px; /* Khoảng cách dọc giữa 2 nút */
     z-index: 1000;
+    pointer-events: auto; /* Kích hoạt lại tương tác cho phần các nút mũi tên */
 }
 
 /* Nút mũi tên điều hướng tròn cao cấp */
