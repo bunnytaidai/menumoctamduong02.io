@@ -400,6 +400,17 @@ html {
     transform: scale(0.95);
 }
 
+.nav-btn:disabled,
+.nav-btn.disabled {
+    opacity: 0.3 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    border-color: #555 !important;
+    color: #555 !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
 /* Gợi ý vuốt lướt ban đầu */
 .swipe-hint {
     position: absolute;

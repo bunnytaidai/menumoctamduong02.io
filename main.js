@@ -1,16 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================================
-    // 1. TÍNH TOÁN KÍCH THƯỚC ĐÁP ỨNG (RESPONSIVE)
+    // 1. KHAI BÁO CÁC PHẦN TỬ DOM & ĐỊNH CẤU HÌNH BAN ĐẦU
     // ==========================================================================
     const bookEl = document.getElementById('book');
     const contentFrame = document.getElementById('frame-4');
-    
-    // Tỷ lệ khung hình của trang đơn ( flyers / book cover: ~ 3:4 tức là 0.73 )
+    const pageIndicator = document.getElementById('page-indicator');
+    const pageStack = document.getElementById('page-stack');
+    const creaseOverlay = document.getElementById('book-crease');
+    const btnPrev = document.getElementById('btn-prev-page');
+    const btnNext = document.getElementById('btn-next-page');
+
+    // Tỷ lệ khung hình của trang đơn (flyers / book cover: ~ 3:4 tức là 0.73)
     const ASPECT_RATIO = 0.73; 
     let pageWidth = 380;
     let pageHeight = 540;
+    let pageFlip = null;
 
+    // ==========================================================================
+    // 2. TÍNH TOÁN KÍCH THƯỚC ĐÁP ỨNG (RESPONSIVE)
+    // ==========================================================================
     function calculateBookSize() {
+        if (!contentFrame) return;
+        
         // Chiều cao book lấy khoảng 98% chiều cao của Frame 4 để tối ưu hóa không gian hiển thị tối đa
         const frameHeight = contentFrame.clientHeight;
         pageHeight = Math.floor(frameHeight * 0.98);
@@ -41,11 +52,71 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateBookSize();
 
     // ==========================================================================
-    // 2. KHỞI TẠO THƯ VIỆN ST.PAGEFLIP TỪ HTML TĨNH
+    // 3. LOGIC XỬ LÝ GÁY SÁCH 3D, CHỈ MỤC TRANG & TRẠNG THÁI NÚT ĐIỀU HƯỚNG
     // ==========================================================================
-    let pageFlip = null;
+    function updateSpineAndUI(pageIndex) {
+        if (!pageFlip) return;
 
+        const currentIdx = (pageIndex !== undefined) ? pageIndex : pageFlip.getCurrentPageIndex();
+        const totalPages = pageFlip.getPageCount(); 
+        const totalSpreads = Math.ceil(totalPages / 2); // Tổng số đôi trang
+        const currentSpread = Math.floor(currentIdx / 2) + 1;
+
+        // A. Cập nhật chỉ số trang dạng "X / Y"
+        const currentIdxEl = document.querySelector('.current-idx');
+        const totalPagesEl = document.querySelector('.total-pages');
+        if (currentIdxEl) currentIdxEl.textContent = currentSpread;
+        if (totalPagesEl) totalPagesEl.textContent = totalSpreads;
+
+        // B. Cập nhật trạng thái bật/tắt (disabled) của 2 nút điều hướng mũi tên
+        if (btnPrev) {
+            if (currentSpread === 1) {
+                btnPrev.disabled = true;
+                btnPrev.classList.add('disabled');
+            } else {
+                btnPrev.disabled = false;
+                btnPrev.classList.remove('disabled');
+            }
+        }
+
+        if (btnNext) {
+            if (currentSpread === totalSpreads) {
+                btnNext.disabled = true;
+                btnNext.classList.add('disabled');
+            } else {
+                btnNext.disabled = false;
+                btnNext.classList.remove('disabled');
+            }
+        }
+
+        // C. Logic gáy sách & Chồng viền giấy lề trái (30px - 50px)
+        // Khi đang ở Trang bìa đầu tiên (đôi trang 1: index 0, 1):
+        // Trang bên trái là trong suốt (index 0) nên chưa có trang nào lật sang bên trái.
+        if (pageStack) {
+            if (currentSpread === 1) {
+                pageStack.style.opacity = '0'; // Ẩn chồng giấy bên trái
+            } else {
+                pageStack.style.opacity = '0.9'; // Hiện chồng giấy tượng trưng các trang đã lật qua
+            }
+        }
+
+        if (creaseOverlay) {
+            if (currentSpread === 1) {
+                // Dịch gáy sách lệch sang để chỉ tạo bóng đổ cho trang phải
+                creaseOverlay.style.background = 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 48%, rgba(0,0,0,0.85) 49.5%, rgba(255,255,255,0.25) 50.5%, rgba(0,0,0,0.3) 53%, rgba(0,0,0,0.1) 70%, rgba(0,0,0,0) 100%)';
+            } else {
+                // Trả về gáy 3D đối xứng 2 bên mềm mại
+                creaseOverlay.style.background = 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.55) 46%, rgba(0, 0, 0, 0.85) 49%, rgba(0, 0, 0, 0.95) 50%, rgba(255, 255, 255, 0.25) 51%, rgba(0, 0, 0, 0.4) 54%, rgba(0, 0, 0, 0.15) 65%, rgba(0, 0, 0, 0.02) 80%, rgba(0, 0, 0, 0) 100%)';
+            }
+        }
+    }
+
+    // ==========================================================================
+    // 4. KHỞI TẠO THƯ VIỆN ST.PAGEFLIP TỪ HTML TĨNH
+    // ==========================================================================
     function initPageFlip() {
+        if (!bookEl) return;
+
         if (pageFlip) {
             pageFlip.destroy();
         }
@@ -73,20 +144,21 @@ document.addEventListener('DOMContentLoaded', () => {
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
         // Cập nhật trạng thái ban đầu
-        updateSpineAndUI();
+        updateSpineAndUI(0);
 
         // Đăng ký các sự kiện lật trang
         pageFlip.on('flip', (e) => {
-            updateSpineAndUI();
+            updateSpineAndUI(e.data);
         });
 
         pageFlip.on('changeState', (e) => {
             // Khi đang lật hoặc kéo, gáy sách hơi mờ đi để tạo cảm giác tự nhiên 3D
-            const crease = document.getElementById('book-crease');
-            if (e.data === 'page_flip' || e.data === 'user_fold') {
-                crease.style.opacity = '0.5';
-            } else {
-                crease.style.opacity = '0.85';
+            if (creaseOverlay) {
+                if (e.data === 'page_flip' || e.data === 'user_fold') {
+                    creaseOverlay.style.opacity = '0.5';
+                } else {
+                    creaseOverlay.style.opacity = '0.85';
+                }
             }
         });
     }
@@ -95,53 +167,21 @@ document.addEventListener('DOMContentLoaded', () => {
     initPageFlip();
 
     // ==========================================================================
-    // 3. LOGIC XỬ LÝ GÁY SÁCH 3D & CHỈ MỤC & ĐIỀU HƯỚNG
+    // 5. ĐĂNG KÝ SỰ KIỆN CLICK NÚT MŨI TÊN ĐIỀU HƯỚNG VỚI CƠ CHẾ CHỐNG XUNG ĐỘT
     // ==========================================================================
-    const pageIndicator = document.getElementById('page-indicator');
-
-    const pageStack = document.getElementById('page-stack');
-    const creaseOverlay = document.getElementById('book-crease');
-
-    function updateSpineAndUI() {
-        if (!pageFlip) return;
-
-        const currentIdx = pageFlip.getCurrentPageIndex();
-        const totalPages = pageFlip.getPageCount(); 
-        const totalSpreads = Math.ceil(totalPages / 2); // Tổng số đôi trang
-        const currentSpread = Math.floor(currentIdx / 2) + 1;
-
-        // A. Cập nhật chỉ số trang dạng "X / Y"
-        document.querySelector('.current-idx').textContent = currentSpread;
-        document.querySelector('.total-pages').textContent = totalSpreads;
-
-
-
-        // C. Logic gáy sách & Chồng viền giấy lề trái (30px - 50px)
-        // Khi đang ở Trang bìa đầu tiên (đôi trang 1: index 0, 1):
-        // Trang bên trái là trong suốt (index 0) nên chưa có trang nào lật sang bên trái.
-        if (currentSpread === 1) {
-            pageStack.style.opacity = '0'; // Ẩn chồng giấy bên trái
-            
-            // Dịch gáy sách lệch sang để chỉ tạo bóng đổ cho trang phải
-            creaseOverlay.style.background = 'linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 48%, rgba(0,0,0,0.85) 49.5%, rgba(255,255,255,0.25) 50.5%, rgba(0,0,0,0.3) 53%, rgba(0,0,0,0.1) 70%, rgba(0,0,0,0) 100%)';
-        } else {
-            pageStack.style.opacity = '0.9'; // Hiện chồng giấy tượng trưng các trang đã lật qua
-            
-            // Trả về gáy 3D đối xứng 2 bên mềm mại
-            creaseOverlay.style.background = 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.55) 46%, rgba(0, 0, 0, 0.85) 49%, rgba(0, 0, 0, 0.95) 50%, rgba(255, 255, 255, 0.25) 51%, rgba(0, 0, 0, 0.4) 54%, rgba(0, 0, 0, 0.15) 65%, rgba(0, 0, 0, 0.02) 80%, rgba(0, 0, 0, 0) 100%)';
-        }
-    }
-
-    // ==========================================================================
-    // 5. ĐĂNG KÝ SỰ KIỆN CLICK NÚT MŨI TÊN ĐIỀU HƯỚNG
-    // ==========================================================================
-    const btnPrev = document.getElementById('btn-prev-page');
-    const btnNext = document.getElementById('btn-next-page');
-
     if (btnPrev) {
         btnPrev.addEventListener('click', () => {
             if (pageFlip) {
-                pageFlip.flipPrev('top');
+                // Chỉ cho phép click nếu sách đang ở trạng thái tĩnh (read) để tránh lỗi lật dồn dập
+                const isReady = (typeof pageFlip.getState !== 'function' || pageFlip.getState() === 'read');
+                if (isReady) {
+                    const currentIdx = pageFlip.getCurrentPageIndex();
+                    const currentSpread = Math.floor(currentIdx / 2) + 1;
+                    if (currentSpread > 1) {
+                        const targetIdx = (currentSpread - 2) * 2;
+                        pageFlip.flip(targetIdx);
+                    }
+                }
             }
         });
     }
@@ -149,7 +189,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnNext) {
         btnNext.addEventListener('click', () => {
             if (pageFlip) {
-                pageFlip.flipNext('bottom');
+                // Chỉ cho phép click nếu sách đang ở trạng thái tĩnh (read) để tránh lỗi lật dồn dập
+                const isReady = (typeof pageFlip.getState !== 'function' || pageFlip.getState() === 'read');
+                if (isReady) {
+                    const currentIdx = pageFlip.getCurrentPageIndex();
+                    const totalPages = pageFlip.getPageCount();
+                    const totalSpreads = Math.ceil(totalPages / 2);
+                    const currentSpread = Math.floor(currentIdx / 2) + 1;
+                    if (currentSpread < totalSpreads) {
+                        const targetIdx = currentSpread * 2;
+                        pageFlip.flip(targetIdx);
+                    }
+                }
             }
         });
     }
