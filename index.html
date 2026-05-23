@@ -39,8 +39,6 @@
         <!-- Khung 2: Khung Tiêu Đề Trên Cùng (Trong suốt) -->
         <header class="top-header" id="frame-2">
             <div class="header-content">
-                <span class="calligraphy-seal">沐心堂</span>
-                <div class="header-divider"></div>
             </div>
         </header>
 
@@ -72,10 +70,16 @@
 
 
 
-            <!-- Gợi ý tương tác vuốt (swipe gesture hint) -->
-            <div class="swipe-hint" id="swipe-hint">
-                <span class="hint-text">Vuốt hoặc click mép sách để lật trang</span>
-                <div class="hint-hand"><i class="fa-solid fa-hand-pointer"></i></div>
+
+            
+            <!-- Nút điều hướng sách lật -->
+            <div class="book-navigation">
+                <button class="nav-btn nav-prev" id="btn-prev-page" aria-label="Trang trước" title="Trang trước">
+                    <i class="fa-solid fa-chevron-up"></i>
+                </button>
+                <button class="nav-btn nav-next" id="btn-next-page" aria-label="Trang sau" title="Trang sau">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
             </div>
             
             <!-- Chỉ mục trang hiện tại -->

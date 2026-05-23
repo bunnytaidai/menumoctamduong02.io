@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let pageHeight = 540;
 
     function calculateBookSize() {
-        // Chiều cao book lấy khoảng 90% chiều cao của Frame 4 (60% height toàn trang)
+        // Chiều cao book lấy khoảng 98% chiều cao của Frame 4 để tối ưu hóa không gian hiển thị tối đa
         const frameHeight = contentFrame.clientHeight;
-        pageHeight = Math.floor(frameHeight * 0.9);
+        pageHeight = Math.floor(frameHeight * 0.98);
         
-        // Giới hạn chiều cao tối đa để sách cân đối
-        if (pageHeight > 620) pageHeight = 620;
+        // Nới rộng giới hạn chiều cao tối đa lên 850px để sách hiển thị to rõ rực rỡ hơn trên Desktop lớn
+        if (pageHeight > 850) pageHeight = 850;
         if (pageHeight < 320) pageHeight = 320;
 
         // Tính chiều rộng trang đơn tương ứng
@@ -142,7 +142,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Đăng ký các sự kiện lật trang
         pageFlip.on('flip', (e) => {
             updateSpineAndUI();
-            hideSwipeHint();
         });
 
         pageFlip.on('changeState', (e) => {
@@ -197,27 +196,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
-
     // ==========================================================================
-    // 5. GỢI Ý CỬ CHỈ (SWIPE HINT)
+    // 5. ĐĂNG KÝ SỰ KIỆN CLICK NÚT MŨI TÊN ĐIỀU HƯỚNG
     // ==========================================================================
-    const swipeHint = document.getElementById('swipe-hint');
-    let hintHidden = false;
+    const btnPrev = document.getElementById('btn-prev-page');
+    const btnNext = document.getElementById('btn-next-page');
 
-    function hideSwipeHint() {
-        if (hintHidden) return;
-        swipeHint.style.transition = 'opacity 0.6s ease';
-        swipeHint.style.opacity = '0';
-        setTimeout(() => {
-            swipeHint.style.display = 'none';
-        }, 600);
-        hintHidden = true;
+    if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+            if (pageFlip) {
+                pageFlip.flipPrev('top');
+            }
+        });
     }
 
-    // Tự động ẩn gợi ý sau 8 giây nếu người dùng không thao tác
-    setTimeout(hideSwipeHint, 8000);
-
+    if (btnNext) {
+        btnNext.addEventListener('click', () => {
+            if (pageFlip) {
+                pageFlip.flipNext('bottom');
+            }
+        });
+    }
     // ==========================================================================
     // 6. RESPONSIVE WINDOW RESIZE
     // ==========================================================================
