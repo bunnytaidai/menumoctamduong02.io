@@ -783,7 +783,7 @@ html {
 
     /* ĐỊNH VỊ CHO DI ĐỘNG: Đặt trang phải (trang nội dung) chiếm trọn màn hình, gáy sách nằm sát lề trái 5px */
     .flipbook {
-        left: 5px; /* Spine nằm cách viền trái đúng 5px */
+        left: calc(5px - var(--page-width)); /* Đẩy trang trái ẩn đi, hiển thị cố định trang phải trên màn hình */
         right: auto;
     }
 
