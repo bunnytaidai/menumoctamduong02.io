@@ -23,8 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
         pageWidth = Math.floor(pageHeight * ASPECT_RATIO);
 
         // ĐẢM BẢO KHÔNG TRÀN MÀN HÌNH DI ĐỘNG:
-        // Căn lề hai bên cực mảnh (5px) giúp trang sách to tối đa trên di động
-        const maxAllowedWidth = window.innerWidth - 10;
+        // Căn lề hai bên cực mảnh (5px), riêng trên di động chừa 90px để hiển thị trang lót trái và nút điều hướng phải
+        const isMobile = window.innerWidth <= 600;
+        const maxAllowedWidth = isMobile ? (window.innerWidth - 90) : (window.innerWidth - 10);
         if (pageWidth > maxAllowedWidth) {
             pageWidth = maxAllowedWidth;
             // Tính ngược lại chiều cao tương ứng theo tỷ lệ vàng để không méo hình
@@ -129,6 +130,28 @@ document.addEventListener('DOMContentLoaded', () => {
             // Trả về gáy 3D đối xứng 2 bên mềm mại
             creaseOverlay.style.background = 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.55) 46%, rgba(0, 0, 0, 0.85) 49%, rgba(0, 0, 0, 0.95) 50%, rgba(255, 255, 255, 0.25) 51%, rgba(0, 0, 0, 0.4) 54%, rgba(0, 0, 0, 0.15) 65%, rgba(0, 0, 0, 0.02) 80%, rgba(0, 0, 0, 0) 100%)';
         }
+    }
+
+    // ==========================================================================
+    // 5. ĐĂNG KÝ SỰ KIỆN CLICK NÚT MŨI TÊN ĐIỀU HƯỚNG
+    // ==========================================================================
+    const btnPrev = document.getElementById('btn-prev-page');
+    const btnNext = document.getElementById('btn-next-page');
+
+    if (btnPrev) {
+        btnPrev.addEventListener('click', () => {
+            if (pageFlip) {
+                pageFlip.flipPrev('top');
+            }
+        });
+    }
+
+    if (btnNext) {
+        btnNext.addEventListener('click', () => {
+            if (pageFlip) {
+                pageFlip.flipNext('bottom');
+            }
+        });
     }
 
     // ==========================================================================

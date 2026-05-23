@@ -163,7 +163,7 @@ html {
 /* Container sách lật - căn spine vào mốc 20px của viewport (tương đương 50px màn hình) */
 .flipbook {
     position: absolute;
-    right: 5px; /* Sát viền lề phải hơn nữa trên Desktop (cách đúng 5px) */
+    right: 70px; /* Dịch nhẹ sang trái 70px để nhường lề phải cho nút điều hướng */
     left: auto;
     height: 90%;
     width: calc(2 * var(--page-width));
@@ -251,7 +251,7 @@ html {
     position: absolute;
     top: 5%;
     height: 90%;
-    right: var(--page-width); /* Căn rãnh gáy ở giữa 2 trang trên Desktop */
+    right: calc(70px + var(--page-width)); /* Căn rãnh gáy ở giữa 2 trang trên Desktop */
     left: auto;
     width: 50px; /* Tăng độ rộng để dải bóng mềm mại hơn */
     transform: translateX(50%); /* Căn giữa hoàn hảo trên đường trục gáy */
@@ -277,7 +277,7 @@ html {
 /* Hiệu ứng chồng nhiều lớp viền giấy (Page Stack) ở lề trái từ 30px đến 50px */
 .book-page-stack {
     position: absolute;
-    right: calc(20px + var(--page-width)); /* Đặt chồng giấy bên trái gáy trên Desktop */
+    right: calc(70px + var(--page-width) + 20px); /* Đặt chồng giấy bên trái gáy trên Desktop */
     left: auto;
     top: 5%;
     height: 90%;
@@ -333,8 +333,9 @@ html {
 /* Chỉ mục số trang */
 .page-indicator {
     position: absolute;
-    bottom: -35px;
-    right: calc(20px + (var(--page-width) / 2)); /* Căn giữa chỉ số theo trang đang hiển thị */
+    top: 15px; /* Đưa lên phía trên đầu màn hình để tránh đè footer */
+    bottom: auto;
+    right: calc(70px + (var(--page-width) / 2)); /* Căn giữa chỉ số theo trang đang hiển thị */
     left: auto;
     transform: translateX(50%);
     background: rgba(18, 22, 18, 0.7);
@@ -354,6 +355,49 @@ html {
 
 .page-indicator .current-idx {
     color: var(--gold-color);
+}
+
+/* Thanh điều hướng sách lật bên viền phải */
+.book-navigation {
+    position: absolute;
+    right: 15px; /* Sát viền ngoài cùng bên phải */
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Khoảng cách dọc giữa 2 nút */
+    z-index: 1000;
+}
+
+/* Nút mũi tên điều hướng tròn cao cấp */
+.nav-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(18, 22, 18, 0.75);
+    border: 1.5px solid var(--gold-color);
+    color: var(--gold-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 10px var(--gold-glow);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    outline: none;
+}
+
+.nav-btn:hover {
+    background: var(--gold-color);
+    color: var(--bg-dark);
+    box-shadow: 0 0 15px var(--gold-color);
+    transform: scale(1.1);
+}
+
+.nav-btn:active {
+    transform: scale(0.95);
 }
 
 /* Gợi ý vuốt lướt ban đầu */
@@ -758,12 +802,25 @@ html {
 
     /* Điều chỉnh vị trí chỉ số trang và gợi ý vuốt trên mobile */
     .page-indicator {
-        bottom: -32px;
+        top: 10px; /* Đưa lên phía trên đầu màn hình di động */
+        bottom: auto;
         font-size: 0.75rem;
         padding: 4px 12px;
-        left: calc(5px + (var(--page-width) / 2)); /* Căn giữa theo trang bên Phải đang hiển thị trên Mobile */
-        right: auto;
-        transform: translateX(-50%);
+        left: calc(40px + (var(--page-width) / 2)) !important; /* Căn giữa theo trang bên Phải đang hiển thị trên Mobile */
+        right: auto !important;
+        transform: translateX(-50%) !important;
+    }
+
+    /* Định vị điều hướng sát lề phải 50px trống trên mobile */
+    .book-navigation {
+        right: 5px !important; /* Giữ ở trung tâm lề trống 50px */
+        gap: 15px !important;
+    }
+
+    .nav-btn {
+        width: 38px !important;
+        height: 38px !important;
+        font-size: 0.95rem !important;
     }
 
     .swipe-hint {
@@ -781,21 +838,22 @@ html {
         height: 20%;
     }
 
-    /* ĐỊNH VỊ CHO DI ĐỘNG: Đặt trang phải (trang nội dung) chiếm trọn màn hình, gáy sách nằm sát lề trái 5px */
+    /* ĐỊNH VỊ CHO DI ĐỘNG: Gáy sách ở 40px, trang trái chừa lộ ra 35px, trang phải cố định căn chỉnh */
     .flipbook {
-        left: calc(5px - var(--page-width)) !important;
+        left: calc(40px - var(--page-width)) !important;
         right: auto !important;
     }
 
     .book-crease-overlay {
-        left: 5px; /* Gáy sách nằm sát lề trái di động 5px */
-        right: auto;
-        transform: translateX(-50%);
+        left: 40px !important; /* Gáy sách nằm ở 40px từ lề trái */
+        right: auto !important;
+        transform: translateX(-50%) !important;
     }
 
     .book-page-stack {
-        left: -15px; /* Chồng viền giấy nằm ngoài biên trái màn hình */
-        right: auto;
+        left: 20px !important; /* Chồng viền giấy nằm dưới trang lót bên trái (rộng 20px) */
+        right: auto !important;
+        width: 20px !important;
     }
 }
 
