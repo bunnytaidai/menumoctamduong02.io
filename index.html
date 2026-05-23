@@ -27,6 +27,10 @@
     <!-- Core Styling -->
     <link rel="stylesheet" href="index.css">
     
+    <!-- Preload Critical Assets for Instant Rendering -->
+    <link rel="preload" href="images/spa_background.png" as="image">
+    <link rel="preload" href="images/dau.jpg" as="image">
+    
     <!-- StPageFlip CDN (Dependency-free Browser Bundle) -->
     <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
 </head>
@@ -59,11 +63,70 @@
                     <div class="stack-line line-4"></div>
                 </div>
                 
-                <!-- Đối tượng sách lật ftPageFlip (Trang sẽ được tự động quét và nạp qua JS) -->
+                <!-- Đối tượng sách lật ftPageFlip -->
                 <div class="flipbook" id="book">
-                    <div class="book-loading">
-                        <i class="fa-solid fa-circle-notch fa-spin"></i>
-                        <span>Đang nạp các trang sách dưỡng sinh...</span>
+                    <!-- Trang 1: Trong suốt (Trang lót bên trái khi chưa mở bìa) -->
+                    <div class="page page-transparent" data-density="hard">
+                        <div class="page-content"></div>
+                    </div>
+                    
+                    <!-- Trang 2: Trang bìa (dau.jpg) (nằm bên phải) -->
+                    <div class="page page-image" data-density="hard">
+                        <div class="page-content" style="background-image: url('images/dau.jpg');"></div>
+                    </div>
+
+                    <!-- Trang 3: Trang trắng mặt sau (nằm bên trái) -->
+                    <div class="page page-white">
+                        <div class="page-content"></div>
+                    </div>
+                    <!-- Trang 4: Trang 2.jpg (nằm bên phải) -->
+                    <div class="page page-image">
+                        <div class="page-content" style="background-image: url('images/2.jpg');"></div>
+                    </div>
+
+                    <!-- Trang 5: Trang trắng mặt sau (nằm bên trái) -->
+                    <div class="page page-white">
+                        <div class="page-content"></div>
+                    </div>
+                    <!-- Trang 6: Trang 3.jpg (nằm bên phải) -->
+                    <div class="page page-image">
+                        <div class="page-content" style="background-image: url('images/3.jpg');"></div>
+                    </div>
+
+                    <!-- Trang 7: Trang trắng mặt sau (nằm bên trái) -->
+                    <div class="page page-white">
+                        <div class="page-content"></div>
+                    </div>
+                    <!-- Trang 8: Trang 4.jpg (nằm bên phải) -->
+                    <div class="page page-image">
+                        <div class="page-content" style="background-image: url('images/4.jpg');"></div>
+                    </div>
+
+                    <!-- Trang 9: Trang trắng mặt sau (nằm bên trái) -->
+                    <div class="page page-white">
+                        <div class="page-content"></div>
+                    </div>
+                    <!-- Trang 10: Trang 5.jpg (nằm bên phải) -->
+                    <div class="page page-image">
+                        <div class="page-content" style="background-image: url('images/5.jpg');"></div>
+                    </div>
+
+                    <!-- Trang 11: Trang trắng mặt sau (nằm bên trái) -->
+                    <div class="page page-white">
+                        <div class="page-content"></div>
+                    </div>
+                    <!-- Trang 12: Trang 6.jpg (nằm bên phải) -->
+                    <div class="page page-image">
+                        <div class="page-content" style="background-image: url('images/6.jpg');"></div>
+                    </div>
+
+                    <!-- Trang 13: Trang trắng mặt sau (nằm bên trái) -->
+                    <div class="page page-white">
+                        <div class="page-content"></div>
+                    </div>
+                    <!-- Trang 14: Trang bìa cuối (cuoi.jpg) (nằm bên phải) -->
+                    <div class="page page-image" data-density="hard">
+                        <div class="page-content" style="background-image: url('images/cuoi.jpg');"></div>
                     </div>
                 </div>
             </div>

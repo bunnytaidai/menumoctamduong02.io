@@ -40,75 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateBookSize();
 
     // ==========================================================================
-    // 2. KHỞI TẠO DANH SÁCH TRANG NỘI DUNG (LOAD TỐC ĐỘ SIÊU TỐC - ZERO DELAY)
+    // 2. KHỞI TẠO THƯ VIỆN ST.PAGEFLIP TỪ HTML TĨNH
     // ==========================================================================
     let pageFlip = null;
-    
-    // Khai báo cứng danh sách ảnh thực tế để bỏ qua việc quét tuần tự qua mạng gây chậm trễ trang
-    const imagesScanned = [
-        'images/2.jpg',
-        'images/3.jpg',
-        'images/4.jpg',
-        'images/5.jpg',
-        'images/6.jpg'
-    ];
 
-    function loadPagesInstantly() {
-        bookEl.innerHTML = ''; // Xóa loader lập tức
-        const pageElements = [];
-
-        // A. Trang 1: Trong suốt (Trang lót bên trái khi chưa mở bìa)
-        const page1 = document.createElement('div');
-        page1.className = 'page page-transparent';
-        page1.setAttribute('data-density', 'hard');
-        page1.innerHTML = `<div class="page-content"></div>`;
-        pageElements.push(page1);
-
-        // B. Trang 2: Trang bìa (dau.jpg) (nằm bên phải)
-        const page2 = document.createElement('div');
-        page2.className = 'page page-image';
-        page2.setAttribute('data-density', 'hard');
-        page2.innerHTML = `<div class="page-content" style="background-image: url('images/dau.jpg');"></div>`;
-        pageElements.push(page2);
-
-        // C. Các trang nội dung ở giữa
-        imagesScanned.forEach(imgUrl => {
-            // Trang trắng mặt sau (nằm bên trái)
-            const pgWhite = document.createElement('div');
-            pgWhite.className = 'page page-white';
-            pgWhite.innerHTML = `<div class="page-content"></div>`;
-            pageElements.push(pgWhite);
-
-            // Trang nội dung (nằm bên phải)
-            const pgContent = document.createElement('div');
-            pgContent.className = 'page page-image';
-            pgContent.innerHTML = `<div class="page-content" style="background-image: url('${imgUrl}');"></div>`;
-            pageElements.push(pgContent);
-        });
-
-        // D. Trang trắng áp chót (nằm bên trái)
-        const pageCuoiWhite = document.createElement('div');
-        pageCuoiWhite.className = 'page page-white';
-        pageCuoiWhite.innerHTML = `<div class="page-content"></div>`;
-        pageElements.push(pageCuoiWhite);
-
-        // E. Trang bìa cuối (cuoi.jpg) (nằm bên phải)
-        const pageCuoi = document.createElement('div');
-        pageCuoi.className = 'page page-image';
-        pageCuoi.setAttribute('data-density', 'hard');
-        pageCuoi.innerHTML = `<div class="page-content" style="background-image: url('images/cuoi.jpg');"></div>`;
-        pageElements.push(pageCuoi);
-
-        // Đưa các trang vào DOM
-        pageElements.forEach(pg => bookEl.appendChild(pg));
-
-        // Khởi tạo sách lật
-        initPageFlip();
-    }
-
-    // ==========================================================================
-    // 3. KHỞI TẠO THƯ VIỆN ST.PAGEFLIP
-    // ==========================================================================
     function initPageFlip() {
         if (pageFlip) {
             pageFlip.destroy();
@@ -133,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
             disableKeyPress: true
         });
 
-        // Nạp nội dung từ các div .page mới tạo trong HTML
+        // Nạp nội dung từ các div .page có sẵn trong HTML tĩnh giúp tải trang cực kỳ nhanh
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
         // Cập nhật trạng thái ban đầu
@@ -155,11 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Khởi động nạp trang và sách lật siêu tốc ngay lập tức (không trễ)
-    loadPagesInstantly();
+    // Khởi tạo sách lật trực tiếp lập tức
+    initPageFlip();
 
     // ==========================================================================
-    // 4. LOGIC XỬ LÝ GÁY SÁCH 3D & CHỈ MỤC & ĐIỀU HƯỚNG
+    // 3. LOGIC XỬ LÝ GÁY SÁCH 3D & CHỈ MỤC & ĐIỀU HƯỚNG
     // ==========================================================================
     const pageIndicator = document.getElementById('page-indicator');
 
