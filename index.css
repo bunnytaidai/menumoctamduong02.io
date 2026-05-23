@@ -31,6 +31,7 @@ html {
     background-color: var(--bg-dark);
     font-family: 'Montserrat', sans-serif;
     color: #f5f5ee;
+    touch-action: none; /* Khóa hoàn toàn mọi thao tác thu phóng (zoom) và cuộn (scroll) mặc định của trình duyệt */
 }
 
 /* ==========================================================================

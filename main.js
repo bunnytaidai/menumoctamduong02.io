@@ -109,6 +109,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 creaseOverlay.style.background = 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.55) 46%, rgba(0, 0, 0, 0.85) 49%, rgba(0, 0, 0, 0.95) 50%, rgba(255, 255, 255, 0.25) 51%, rgba(0, 0, 0, 0.4) 54%, rgba(0, 0, 0, 0.15) 65%, rgba(0, 0, 0, 0.02) 80%, rgba(0, 0, 0, 0) 100%)';
             }
         }
+
+        // D. Khóa vuốt trang thừa ở trang đầu và trang cuối để tránh lỗi hiển thị trắng trang
+        const pages = document.querySelectorAll('.page');
+        if (pages.length > 0) {
+            // Trang đầu tiên (index 0) luôn khóa pointer-events để tránh vuốt ngược ra trước bìa đầu
+            if (pages[0]) pages[0].style.pointerEvents = 'none';
+            
+            // Trang cuối cùng (index 13) khóa pointer-events khi đang ở đôi trang cuối cùng để tránh vuốt tiếp
+            const lastPageIdx = totalPages - 1;
+            if (currentSpread === totalSpreads) {
+                if (pages[lastPageIdx]) pages[lastPageIdx].style.pointerEvents = 'none';
+            } else {
+                if (pages[lastPageIdx]) pages[lastPageIdx].style.pointerEvents = 'auto';
+            }
+        }
     }
 
     // ==========================================================================
@@ -169,18 +184,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================================
     // 5. ĐĂNG KÝ SỰ KIỆN CLICK NÚT MŨI TÊN ĐIỀU HƯỚNG VỚI CƠ CHẾ CHỐNG XUNG ĐỘT
     // ==========================================================================
+    let isFlipping = false; // Cờ theo dõi trạng thái lật trang chủ động từ nút bấm
+
     if (btnPrev) {
         btnPrev.addEventListener('click', () => {
-            if (pageFlip) {
-                // Chỉ cho phép click nếu sách đang ở trạng thái tĩnh (read) để tránh lỗi lật dồn dập
-                const isReady = (typeof pageFlip.getState !== 'function' || pageFlip.getState() === 'read');
-                if (isReady) {
-                    const currentIdx = pageFlip.getCurrentPageIndex();
-                    const currentSpread = Math.floor(currentIdx / 2) + 1;
-                    if (currentSpread > 1) {
-                        const targetIdx = (currentSpread - 2) * 2;
-                        pageFlip.flip(targetIdx);
-                    }
+            if (pageFlip && !isFlipping) {
+                const currentIdx = pageFlip.getCurrentPageIndex();
+                const currentSpread = Math.floor(currentIdx / 2) + 1;
+                if (currentSpread > 1) {
+                    isFlipping = true;
+                    const targetIdx = (currentSpread - 2) * 2;
+                    pageFlip.flip(targetIdx);
+                    
+                    // Giải phóng cờ lật sau 350ms (flippingTime = 300ms + 50ms buffer)
+                    // Hoàn toàn không phụ thuộc vào trạng thái getState() của thư viện giúp nút bấm không bao giờ bị liệt
+                    setTimeout(() => {
+                        isFlipping = false;
+                    }, 350);
                 }
             }
         });
@@ -188,18 +208,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnNext) {
         btnNext.addEventListener('click', () => {
-            if (pageFlip) {
-                // Chỉ cho phép click nếu sách đang ở trạng thái tĩnh (read) để tránh lỗi lật dồn dập
-                const isReady = (typeof pageFlip.getState !== 'function' || pageFlip.getState() === 'read');
-                if (isReady) {
-                    const currentIdx = pageFlip.getCurrentPageIndex();
-                    const totalPages = pageFlip.getPageCount();
-                    const totalSpreads = Math.ceil(totalPages / 2);
-                    const currentSpread = Math.floor(currentIdx / 2) + 1;
-                    if (currentSpread < totalSpreads) {
-                        const targetIdx = currentSpread * 2;
-                        pageFlip.flip(targetIdx);
-                    }
+            if (pageFlip && !isFlipping) {
+                const currentIdx = pageFlip.getCurrentPageIndex();
+                const totalPages = pageFlip.getPageCount();
+                const totalSpreads = Math.ceil(totalPages / 2);
+                const currentSpread = Math.floor(currentIdx / 2) + 1;
+                if (currentSpread < totalSpreads) {
+                    isFlipping = true;
+                    const targetIdx = currentSpread * 2;
+                    pageFlip.flip(targetIdx);
+                    
+                    // Giải phóng cờ lật sau 350ms
+                    setTimeout(() => {
+                        isFlipping = false;
+                    }, 350);
                 }
             }
         });
@@ -215,6 +237,31 @@ document.addEventListener('DOMContentLoaded', () => {
             calculateBookSize();
             initPageFlip();
         }, 250); // Debounce resize sự kiện tránh giật lag
+    });
+
+    // ==========================================================================
+    // 7. KHÓA HOÀN TOÀN CÁC THAO TÁC CUỘN & THU PHÓNG (PINCH TO ZOOM) BẰNG JS
+    // ==========================================================================
+    // Ngăn chặn pinch-to-zoom (thu phóng hai ngón tay) trên toàn giao diện
+    document.addEventListener('touchstart', (event) => {
+        if (event.touches.length > 1) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+
+    // Ngăn chặn double-tap (nhấp đúp màn hình) tự động thu phóng trên một số dòng mobile
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (event) => {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, { passive: false });
+
+    // Ngăn chặn cử chỉ zoom đặc thù trên iOS Safari
+    document.addEventListener('gesturestart', (event) => {
+        event.preventDefault();
     });
 
 });
