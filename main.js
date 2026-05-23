@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pageWidth = Math.floor(pageHeight * ASPECT_RATIO);
 
         // ĐẢM BẢO KHÔNG TRÀN MÀN HÌNH DI ĐỘNG:
-        // Căn lề phải siêu nhỏ (5px) giúp trang sách to tối đa trên di động
-        const maxAllowedWidth = window.innerWidth - 15;
+        // Chiều rộng khả dụng cho trang phải = Chiều rộng màn hình - 50px (gáy) - 20px (lề phải dự phòng)
+        const maxAllowedWidth = window.innerWidth - 70;
         if (pageWidth > maxAllowedWidth) {
             pageWidth = maxAllowedWidth;
             // Tính ngược lại chiều cao tương ứng theo tỷ lệ vàng để không méo hình
