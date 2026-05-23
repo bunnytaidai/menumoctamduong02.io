@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pageWidth = Math.floor(pageHeight * ASPECT_RATIO);
 
         // ĐẢM BẢO KHÔNG TRÀN MÀN HÌNH DI ĐỘNG:
-        // Chiều rộng khả dụng cho trang phải = Chiều rộng màn hình - 50px (gáy) - 20px (lề phải dự phòng)
-        const maxAllowedWidth = window.innerWidth - 70;
+        // Căn lề phải siêu nhỏ (5px) giúp trang sách to tối đa trên di động
+        const maxAllowedWidth = window.innerWidth - 15;
         if (pageWidth > maxAllowedWidth) {
             pageWidth = maxAllowedWidth;
             // Tính ngược lại chiều cao tương ứng theo tỷ lệ vàng để không méo hình
@@ -40,38 +40,21 @@ document.addEventListener('DOMContentLoaded', () => {
     calculateBookSize();
 
     // ==========================================================================
-    // 2. TỰ ĐỘNG DÒ TÌM VÀ NẠP CÁC TRANG ẢNH (DYNAMIC SCANNING)
+    // 2. KHỞI TẠO DANH SÁCH TRANG NỘI DUNG (LOAD TỐC ĐỘ SIÊU TỐC - ZERO DELAY)
     // ==========================================================================
     let pageFlip = null;
-    let imagesScanned = [];
+    
+    // Khai báo cứng danh sách ảnh thực tế để bỏ qua việc quét tuần tự qua mạng gây chậm trễ trang
+    const imagesScanned = [
+        'images/2.jpg',
+        'images/3.jpg',
+        'images/4.jpg',
+        'images/5.jpg',
+        'images/6.jpg'
+    ];
 
-    async function probeAndLoadPages() {
-        let num = 2;
-        let checking = true;
-
-        // Hàm kiểm tra sự tồn tại của ảnh bằng đối tượng Image trong JS
-        const probeImage = (n) => {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(true);
-                img.onerror = () => resolve(false);
-                img.src = `images/${n}.jpg`;
-            });
-        };
-
-        // Chạy vòng lặp bất đồng bộ để kiểm tra tuần tự 2.jpg, 3.jpg, 4.jpg...
-        while (checking) {
-            const exists = await probeImage(num);
-            if (exists) {
-                imagesScanned.push(`images/${num}.jpg`);
-                num++;
-            } else {
-                checking = false; // Dừng lại khi gặp ảnh bị thiếu đầu tiên
-            }
-        }
-
-        // Tạo cấu trúc DOM trang sách lật
-        bookEl.innerHTML = ''; // Xóa loader quay quay
+    function loadPagesInstantly() {
+        bookEl.innerHTML = ''; // Xóa loader lập tức
         const pageElements = [];
 
         // A. Trang 1: Trong suốt (Trang lót bên trái khi chưa mở bìa)
@@ -173,8 +156,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Bắt đầu quá trình quét ảnh và nạp sách
-    probeAndLoadPages();
+    // Khởi động nạp trang và sách lật siêu tốc ngay lập tức (không trễ)
+    loadPagesInstantly();
 
     // ==========================================================================
     // 4. LOGIC XỬ LÝ GÁY SÁCH 3D & CHỈ MỤC & ĐIỀU HƯỚNG

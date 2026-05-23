@@ -761,9 +761,9 @@ html {
         bottom: -32px;
         font-size: 0.75rem;
         padding: 4px 12px;
-        left: calc(20px + (var(--page-width) / 2)); /* Căn giữa theo trang bên Phải đang hiển thị trên Mobile */
-        right: auto;
-        transform: translateX(-50%);
+        right: calc(5px + (var(--page-width) / 2)); /* Căn giữa theo trang bên Phải đang hiển thị trên Mobile */
+        left: auto;
+        transform: translateX(50%);
     }
 
     .swipe-hint {
@@ -780,21 +780,21 @@ html {
         height: 20%;
     }
 
-    /* ĐỊNH VỊ CHO DI ĐỘNG: Hiển thị trang PHẢI (trang ảnh nội dung), trang TRÁI (trang trắng) bị ẩn về bên trái */
+    /* ĐỊNH VỊ CHO DI ĐỘNG: Đẩy trang phải sát viền ngoài cùng bên phải (cách đúng 5px) */
     .flipbook {
-        left: calc(20px - var(--page-width)); /* Đẩy trang trái ra ngoài biên trái màn hình */
-        right: auto;
+        right: 5px;
+        left: auto;
     }
 
     .book-crease-overlay {
-        left: 20px; /* Gáy sách nằm sát lề trái di động */
-        right: auto;
-        transform: translateX(-50%);
+        right: calc(var(--page-width) - 25px); /* Định vị gáy sách trùng khớp với mép trái trang phải */
+        left: auto;
+        transform: translateX(50%);
     }
 
     .book-page-stack {
-        left: 0px; /* Chồng viền giấy nằm sát lề trái di động */
-        right: auto;
+        right: calc(5px + var(--page-width)); /* Chồng viền giấy sát mép trái trang phải */
+        left: auto;
     }
 }
 
