@@ -193,30 +193,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Trả về gáy 3D đối xứng 2 bên mềm mại
             creaseOverlay.style.background = 'linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.04) 20%, rgba(0, 0, 0, 0.2) 40%, rgba(0, 0, 0, 0.55) 46%, rgba(0, 0, 0, 0.85) 49%, rgba(0, 0, 0, 0.95) 50%, rgba(255, 255, 255, 0.25) 51%, rgba(0, 0, 0, 0.4) 54%, rgba(0, 0, 0, 0.15) 65%, rgba(0, 0, 0, 0.02) 80%, rgba(0, 0, 0, 0) 100%)';
-        }
     }
 
-    // ==========================================================================
-    // 5. ĐĂNG KÝ SỰ KIỆN CLICK NÚT MŨI TÊN ĐIỀU HƯỚNG
-    // ==========================================================================
-    const btnPrev = document.getElementById('btn-prev-page');
-    const btnNext = document.getElementById('btn-next-page');
-
-    if (btnPrev) {
-        btnPrev.addEventListener('click', () => {
-            if (pageFlip) {
-                pageFlip.flipPrev('top');
-            }
-        });
-    }
-
-    if (btnNext) {
-        btnNext.addEventListener('click', () => {
-            if (pageFlip) {
-                pageFlip.flipNext('bottom');
-            }
-        });
-    }
     // ==========================================================================
     // 6. RESPONSIVE WINDOW RESIZE
     // ==========================================================================
