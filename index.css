@@ -67,7 +67,7 @@ html {
     top: 0;
     left: 0;
     width: 100%;
-    height: 10%;
+    height: 5%; /* Giảm từ 10% xuống 5% vì đã bỏ tiêu đề chữ */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -136,10 +136,10 @@ html {
    ========================================================================== */
 .content-frame {
     position: absolute;
-    top: 10%;
+    top: 5%; /* Đẩy sát lên top 5% */
     left: 0;
     width: 100%;
-    height: 80%; /* Tăng từ 70% lên 80% trên Desktop để sách to đẹp hơn */
+    height: 85%; /* Tăng từ 80% lên 85% trên Desktop nhờ việc thu nhỏ header */
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -163,7 +163,7 @@ html {
 /* Container sách lật - căn spine vào mốc 20px của viewport (tương đương 50px màn hình) */
 .flipbook {
     position: absolute;
-    right: 20px; /* Cố định trang phải cách viền phải 20px trên Desktop */
+    right: 5px; /* Sát viền lề phải hơn nữa trên Desktop (cách đúng 5px) */
     left: auto;
     height: 90%;
     width: calc(2 * var(--page-width));
@@ -761,7 +761,7 @@ html {
         bottom: -32px;
         font-size: 0.75rem;
         padding: 4px 12px;
-        left: calc(20px + (var(--page-width) / 2)); /* Căn giữa theo trang bên Phải đang hiển thị trên Mobile */
+        left: calc(5px + (var(--page-width) / 2)); /* Căn giữa theo trang bên Phải đang hiển thị trên Mobile */
         right: auto;
         transform: translateX(-50%);
     }
@@ -773,27 +773,28 @@ html {
 
     /* Thiết lập lại chiều cao trên di động để vừa với 2 hàng nút */
     .content-frame {
-        height: 70%;
+        top: 5%;
+        height: 75%; /* Tăng từ 70% lên 75% trên di động để tăng không gian uốn cong chiều cao */
     }
 
     .bottom-footer {
         height: 20%;
     }
 
-    /* ĐỊNH VỊ CHO DI ĐỘNG: Hiển thị trang PHẢI (trang ảnh nội dung), trang TRÁI (trang trắng) bị ẩn về bên trái */
+    /* ĐỊNH VỊ CHO DI ĐỘNG: Đặt trang phải (trang nội dung) chiếm trọn màn hình, gáy sách nằm sát lề trái 5px */
     .flipbook {
-        left: calc(20px - var(--page-width)); /* Đẩy trang trái ra ngoài biên trái màn hình */
+        left: 5px; /* Spine nằm cách viền trái đúng 5px */
         right: auto;
     }
 
     .book-crease-overlay {
-        left: 20px; /* Gáy sách nằm sát lề trái di động */
+        left: 5px; /* Gáy sách nằm sát lề trái di động 5px */
         right: auto;
         transform: translateX(-50%);
     }
 
     .book-page-stack {
-        left: 0px; /* Chồng viền giấy nằm sát lề trái di động */
+        left: -15px; /* Chồng viền giấy nằm ngoài biên trái màn hình */
         right: auto;
     }
 }

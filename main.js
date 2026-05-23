@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         pageWidth = Math.floor(pageHeight * ASPECT_RATIO);
 
         // ĐẢM BẢO KHÔNG TRÀN MÀN HÌNH DI ĐỘNG:
-        // Chiều rộng khả dụng cho trang phải = Chiều rộng màn hình - 50px (gáy) - 20px (lề phải dự phòng)
-        const maxAllowedWidth = window.innerWidth - 70;
+        // Căn lề hai bên cực mảnh (5px) giúp trang sách to tối đa trên di động
+        const maxAllowedWidth = window.innerWidth - 10;
         if (pageWidth > maxAllowedWidth) {
             pageWidth = maxAllowedWidth;
             // Tính ngược lại chiều cao tương ứng theo tỷ lệ vàng để không méo hình
@@ -126,8 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
             showCover: false,      // Sử dụng trang đôi liên tục.
             usePortrait: false,    // Ép hiển thị trang đôi kể cả trên mobile ngang.
             
-            flippingTime: 800,     // Hoạt ảnh lật trang mượt mà (800ms)
-            swipeDistance: 25,     // Độ dài lướt tối thiểu để lật
+            flippingTime: 300,     // Hoạt ảnh lật trang siêu tốc (300ms) cực kỳ nhạy và nhanh
+            swipeDistance: 15,     // Giảm khoảng cách vuốt tối thiểu để lật trang nhanh hơn trên mobile
             maxShadowOpacity: 0.5, // Độ đậm của bóng bóng đổ StPageFlip vẽ
             showPageCorners: true, // Nhô mép trang khi di chuột qua để gợi ý lật
             disableKeyPress: true
